@@ -2,8 +2,6 @@ package org.lab;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Timer;
 
 public class UI {
@@ -44,7 +42,11 @@ public class UI {
         JButton buttonAlarm = new JButton("Set Alarm");
         buttonAlarm.setPreferredSize(new Dimension(100, 30));
 
+        JButton buttonStopAlarm = new JButton("Stop Alarm");
+        buttonStopAlarm.setPreferredSize(new Dimension(100, 30));
+
         panel.add(buttonAlarm);
+        panel.add(buttonStopAlarm);
 
         buttonAlarm.addActionListener(e -> {
             String hour = getSelectedValue(timeSelection, 0);
@@ -52,11 +54,25 @@ public class UI {
             String second = getSelectedValue(timeSelection, 2);
 
             if (hour != null && minute != null && second != null) {
-                int delay = Integer.parseInt(hour) * 3600000 + Integer.parseInt(minute) * 60000 + Integer.parseInt(second) * 1000;
-                Time time = new Time();
-                Alarm.scheduleAtFixedRate(time.alarm(hour, minute, second), delay, delay);
-                JOptionPane.showMessageDialog(frame, "Alarm set for " + hour + ":" + minute + ":" + second);
+                if (!(Integer.parseInt(hour) ==0 && Integer.parseInt(minute) == 0 && Integer.parseInt(second) == 0))
+                {
+                    if (!AlarmStarted)
+                    {
+                        int delay = Integer.parseInt(hour) * 3600000 + Integer.parseInt(minute) * 60000 + Integer.parseInt(second) * 1000;
+                        Time time = new Time();
+                        Alarm.scheduleAtFixedRate(time.alarm(hour, minute, second), delay, delay);
+                        JOptionPane.showMessageDialog(frame, "Alarm set for " + hour + ":" + minute + ":" + second);
+                        AlarmStarted = true;
+                    }
+                }
+                else JOptionPane.showMessageDialog(frame, "Set Alarm Time(not 0)");
             }
+            else JOptionPane.showMessageDialog(frame, "Set Alarm Time");
+        });
+
+        buttonStopAlarm.addActionListener(e -> {
+           Alarm.cancel();
+           JOptionPane.showMessageDialog(frame, "Alarm cancelled");
         });
         return panel;
     }
@@ -80,11 +96,16 @@ public class UI {
             String second = getSelectedValue(timeSelection, 2);
 
             if (hour != null && minute != null && second != null) {
-                int delay = Integer.parseInt(hour) * 3600000 + Integer.parseInt(minute) * 60000 + Integer.parseInt(second) * 1000;
-                Time time = new Time();
-                new Timer().schedule(time.timer(), delay);
-                JOptionPane.showMessageDialog(frame, "Timer set for " + hour + ":" + minute + ":" + second);
+                if (!(Integer.parseInt(hour) ==0 && Integer.parseInt(minute) == 0 && Integer.parseInt(second) == 0))
+                {
+                    int delay = Integer.parseInt(hour) * 3600000 + Integer.parseInt(minute) * 60000 + Integer.parseInt(second) * 1000;
+                    Time time = new Time();
+                    new Timer().schedule(time.timer(), delay);
+                    JOptionPane.showMessageDialog(frame, "Timer set for " + hour + ":" + minute + ":" + second);
+                }
+                else JOptionPane.showMessageDialog(frame, "Set Timer Duration(not 0)");
             }
+            else JOptionPane.showMessageDialog(frame, "Set Timer Duration");
         });
         return panel;
     }
