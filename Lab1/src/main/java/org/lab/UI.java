@@ -10,119 +10,143 @@ public class UI {
     private final JFrame frame;
     private Timer Alarm = new Timer("Alarm");
     private boolean AlarmStarted = false;
-    public UI(){
-        frame = new JFrame();
+
+    public UI() {
+        frame = new JFrame("Time Management");
         display();
     }
+
     public void display() {
-        frame.setVisible(true);
-        frame.setSize(500, 500);
+        frame.setSize(600, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
-        frame.setLayout(null);
+        frame.setLayout(new BorderLayout());
 
-        JLabel label = new JLabel("Beings of time");
-        label.setFont(new Font("Arial", Font.BOLD, 18));
-        label.setBounds(frame.getWidth()/3+25,0,200,40);
-        frame.add(label);
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.addTab("Alarm", createAlarmTab());
+        tabbedPane.addTab("Timer", createTimerTab());
+        tabbedPane.addTab("Pomodoro", createPomodoroTab());
 
-        JButton buttonAlarm = new JButton("Alarm");
-        buttonAlarm.setFont(new Font("Arial", Font.BOLD, 18));
-        buttonAlarm.setBounds(frame.getWidth()/3+75,200,100,40);
-        frame.add(buttonAlarm);
+        frame.add(tabbedPane, BorderLayout.CENTER);
+        frame.setVisible(true);
+    }
 
-        JButton buttonTimer = new JButton("Timer");
-        buttonTimer.setFont(new Font("Arial", Font.BOLD, 18));
-        buttonTimer.setBounds(frame.getWidth()/3-75,200,100,40);
-        frame.add(buttonTimer);
+    private JPanel createAlarmTab() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(4, 1));
 
-        JButton buttonStopAll = new JButton("Stop");
-        buttonStopAll.setFont(new Font("Arial", Font.BOLD, 18));
-        buttonStopAll.setBounds(frame.getWidth()/3,260,100,40);
-        frame.add(buttonStopAll);
+        JLabel label = new JLabel("Set Alarm Time", SwingConstants.CENTER);
+        panel.add(label);
 
-        String[] hour = new String[24];
-        for (int i = 0; i < 24; i++) {
-            hour[i] = String.format("%02d", (i));
-        }
+        JPanel timeSelection = createTimeSelectionPanel();
+        panel.add(timeSelection);
+
+        JButton buttonAlarm = new JButton("Set Alarm");
+        buttonAlarm.setPreferredSize(new Dimension(100, 30));
+
+        panel.add(buttonAlarm);
+
+        buttonAlarm.addActionListener(e -> {
+            String hour = getSelectedValue(timeSelection, 0);
+            String minute = getSelectedValue(timeSelection, 1);
+            String second = getSelectedValue(timeSelection, 2);
+
+            if (hour != null && minute != null && second != null) {
+                int delay = Integer.parseInt(hour) * 3600000 + Integer.parseInt(minute) * 60000 + Integer.parseInt(second) * 1000;
+                Time time = new Time();
+                Alarm.scheduleAtFixedRate(time.alarm(hour, minute, second), delay, delay);
+                JOptionPane.showMessageDialog(frame, "Alarm set for " + hour + ":" + minute + ":" + second);
+            }
+        });
+        return panel;
+    }
+
+    private JPanel createTimerTab() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(4, 1));
+
+        JLabel label = new JLabel("Set Timer Duration", SwingConstants.CENTER);
+        panel.add(label);
+
+        JPanel timeSelection = createTimeSelectionPanel();
+        panel.add(timeSelection);
+
+        JButton buttonTimer = new JButton("Start Timer");
+        panel.add(buttonTimer);
+
+        buttonTimer.addActionListener(e -> {
+            String hour = getSelectedValue(timeSelection, 0);
+            String minute = getSelectedValue(timeSelection, 1);
+            String second = getSelectedValue(timeSelection, 2);
+
+            if (hour != null && minute != null && second != null) {
+                int delay = Integer.parseInt(hour) * 3600000 + Integer.parseInt(minute) * 60000 + Integer.parseInt(second) * 1000;
+                Time time = new Time();
+                new Timer().schedule(time.timer(), delay);
+                JOptionPane.showMessageDialog(frame, "Timer set for " + hour + ":" + minute + ":" + second);
+            }
+        });
+        return panel;
+    }
+
+    private JPanel createPomodoroTab() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(3, 1));
+
+        JLabel label = new JLabel("Pomodoro Timer", SwingConstants.CENTER);
+        panel.add(label);
+
+        JButton buttonStartPomodoro = new JButton("Start Pomodoro");
+        panel.add(buttonStartPomodoro);
+
+        buttonStartPomodoro.addActionListener(e -> {
+            Time time = new Time();
+            int workMinutes = 25;
+            int shortBreakMinutes = 5;
+            int longBreakMinutes = 15;
+            int sessions = 4;
+
+            Timer pomodoroTimer = new Timer();
+            pomodoroTimer.scheduleAtFixedRate(
+                    time.pomodoro(workMinutes, shortBreakMinutes, longBreakMinutes, sessions),
+                    0,
+                    workMinutes * 60000 + shortBreakMinutes * 60000
+            );
+
+            JOptionPane.showMessageDialog(frame, "Pomodoro started: Work for " + workMinutes + " min, then break!");
+        });
+        return panel;
+    }
+
+    private JPanel createTimeSelectionPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout());
+
+        String[] hour = generateTimeArray(24);
+        String[] minute = generateTimeArray(60);
+        String[] second = generateTimeArray(60);
+
         JList<String> listHour = new JList<>(hour);
-        JScrollPane pane = new JScrollPane(listHour);
-        pane.setBounds(frame.getWidth()/3-100,50,75,100);
-
-        String[] minute = new String[60];
-        for (int i = 0; i < minute.length; i++) {
-            minute[i] = String.format("%02d", (i));
-        }
         JList<String> listMinute = new JList<>(minute);
-        JScrollPane pane1 = new JScrollPane(listMinute);
-        pane1.setBounds(frame.getWidth()/3,50,75,100);
-
-        String[] second = new String[60];
-        for (int i = 0; i < second.length; i++) {
-            second[i] = String.format("%02d", (i));
-        }
         JList<String> listSecond = new JList<>(second);
-        JScrollPane pane2 = new JScrollPane(listSecond);
-        pane2.setBounds(frame.getWidth()/3+100,50,75,100);
 
-        frame.add(pane);
-        frame.add(pane1);
-        frame.add(pane2);
+        panel.add(new JScrollPane(listHour));
+        panel.add(new JScrollPane(listMinute));
+        panel.add(new JScrollPane(listSecond));
+        return panel;
+    }
 
-        buttonAlarm.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!(listHour.getSelectedValue() == null || listMinute.getSelectedValue() == null || listSecond.getSelectedValue() == null))
-                {
-                    if (!(listHour.getSelectedValue().equals(hour[0]) && listMinute.getSelectedValue().equals(minute[0]) && listSecond.getSelectedValue().equals(second[0])))
-                    {
-                        if (!AlarmStarted)
-                        {
-                            JOptionPane.showMessageDialog(frame, "Alarm sent after: " +
-                                    listHour.getSelectedValue() + " hour "
-                                    + listMinute.getSelectedValue() + " minute "
-                                    + listSecond.getSelectedValue() + " second "
-                            );
-                            Time time = new Time();
-                            int delay = Integer.parseInt(listHour.getSelectedValue()) * 3600000 + Integer.parseInt(listMinute.getSelectedValue()) * 60000 + Integer.parseInt(listSecond.getSelectedValue()) * 1000;
-                            Alarm.scheduleAtFixedRate(time.alarm(listHour.getSelectedValue(), listMinute.getSelectedValue(), listSecond.getSelectedValue()), delay, delay);
-                            AlarmStarted = true;
-                        }
-                        else JOptionPane.showMessageDialog(frame, "Alarm is set.");
-                    }
-                    else JOptionPane.showMessageDialog(frame, "Alarm denied");
-                }
-                else JOptionPane.showMessageDialog(frame, "Set time");
-            }
-        });
+    private String getSelectedValue(JPanel panel, int index) {
+        JScrollPane scrollPane = (JScrollPane) panel.getComponent(index);
+        JList<?> list = (JList<?>) scrollPane.getViewport().getView();
+        return (String) list.getSelectedValue();
+    }
 
-        buttonTimer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!(listHour.getSelectedValue() == null || listMinute.getSelectedValue() == null || listSecond.getSelectedValue() == null))
-                {
-                    if (!(listHour.getSelectedValue().equals(hour[0]) && listMinute.getSelectedValue().equals(minute[0]) && listSecond.getSelectedValue().equals(second[0])))
-                    {
-                        JOptionPane.showMessageDialog(frame, "Timer set notify after: " +
-                                listHour.getSelectedValue() + " hour "
-                                + listMinute.getSelectedValue() + " minute "
-                                + listSecond.getSelectedValue() + " second "
-                        );
-                        Time time = new Time();
-                        int delay = Integer.parseInt(listHour.getSelectedValue()) * 3600000 + Integer.parseInt(listMinute.getSelectedValue()) * 60000 + Integer.parseInt(listSecond.getSelectedValue()) * 1000;
-                        new Timer().schedule(time.timer(), delay);
-                    }
-                    else JOptionPane.showMessageDialog(frame, "Timer denied");
-                }
-                else JOptionPane.showMessageDialog(frame, "Set time");
-            }
-        });
-        buttonStopAll.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Alarm.cancel();
-                JOptionPane.showMessageDialog(frame, "Alarm cancelled");
-            }
-        });
+    private String[] generateTimeArray(int size) {
+        String[] array = new String[size];
+        for (int i = 0; i < size; i++) {
+            array[i] = String.format("%02d", i);
+        }
+        return array;
     }
 }

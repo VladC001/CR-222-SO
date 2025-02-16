@@ -22,4 +22,27 @@ public class Time {
         };
         return task;
     }
+    public TimerTask pomodoro(int workMinutes, int shortBreakMinutes, int longBreakMinutes, int sessions) {
+        return new TimerTask() {
+            private int sessionCount = 0;
+            private boolean isWorkSession = true;
+
+            public void run() {
+                if (sessionCount < sessions * 2) {
+                    if (isWorkSession) {
+                        JOptionPane.showMessageDialog(null, "Work Session Started! Focus for " + workMinutes + " minutes.");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Break Time! Relax for " + shortBreakMinutes + " minutes.");
+                    }
+                    isWorkSession = !isWorkSession;
+                    sessionCount++;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Great job! Take a long break of " + longBreakMinutes + " minutes.");
+                    this.cancel();
+                }
+            }
+        };
+    }
+
+
 }
