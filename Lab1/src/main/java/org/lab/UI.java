@@ -112,13 +112,18 @@ public class UI {
 
     private JPanel createPomodoroTab() {
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(3, 1));
+        panel.setLayout(new BorderLayout());
 
         JLabel label = new JLabel("Pomodoro Timer", SwingConstants.CENTER);
-        panel.add(label);
+        panel.add(label, BorderLayout.NORTH);
 
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton buttonStartPomodoro = new JButton("Start Pomodoro");
-        panel.add(buttonStartPomodoro);
+        buttonStartPomodoro.setPreferredSize(new Dimension(200, 60));
+        buttonPanel.add(buttonStartPomodoro);
+
+        panel.add(buttonPanel, BorderLayout.CENTER);
 
         buttonStartPomodoro.addActionListener(e -> {
             Time time = new Time();
@@ -134,10 +139,12 @@ public class UI {
                     workMinutes * 60000 + shortBreakMinutes * 60000
             );
 
-            JOptionPane.showMessageDialog(frame, "Pomodoro started: Work for " + workMinutes + " min, then break!");
+            JOptionPane.showMessageDialog(null, "Pomodoro started: Work for " + workMinutes + " min, then break!");
         });
+
         return panel;
     }
+
 
     private JPanel createTimeSelectionPanel() {
         JPanel panel = new JPanel();
