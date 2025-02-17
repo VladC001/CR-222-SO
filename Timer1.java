@@ -11,7 +11,6 @@ class Timer1 extends TimerTask {
             "more energy",
             "more passion",
             "hoy hoy hoyyyyy"};
-
     private int n = 20;
     private Timer timer;
     private JTextArea textArea;
@@ -29,6 +28,7 @@ class Timer1 extends TimerTask {
         } else {
             cancel();
             timer.cancel();
+            //textArea.append("\nTask completat. Timerul s-a oprit.\n");
         }
     }
 
