@@ -3,7 +3,7 @@ package MultiTimer;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Timer3 {
+public class Timer3  {
     private Timer timer;
     private Main app;
 

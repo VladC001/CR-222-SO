@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Timer2 {
+public class Timer2  {
     private Timer timer;
     private Main app;
 
