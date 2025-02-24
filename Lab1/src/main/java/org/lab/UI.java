@@ -31,19 +31,21 @@ public class UI {
 
     private JPanel createAlarmTab() {
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(4, 1));
+        panel.setLayout(null);
 
         JLabel label = new JLabel("Set Alarm Time", SwingConstants.CENTER);
+        label.setBounds(frame.getWidth()/2-75,40,150,40);
         panel.add(label);
 
         JPanel timeSelection = createTimeSelectionPanel();
+        timeSelection.setBounds(frame.getWidth()/2-75,100,150,125);
         panel.add(timeSelection);
 
         JButton buttonAlarm = new JButton("Set Alarm");
-        buttonAlarm.setPreferredSize(new Dimension(100, 30));
+        buttonAlarm.setBounds(frame.getWidth()/2-125,250,100,40);
 
         JButton buttonStopAlarm = new JButton("Stop Alarm");
-        buttonStopAlarm.setPreferredSize(new Dimension(100, 30));
+        buttonStopAlarm.setBounds(frame.getWidth()/2+25,250,100,40);
 
         panel.add(buttonAlarm);
         panel.add(buttonStopAlarm);
@@ -79,15 +81,18 @@ public class UI {
 
     private JPanel createTimerTab() {
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(4, 1));
+        panel.setLayout(null);
 
         JLabel label = new JLabel("Set Timer Duration", SwingConstants.CENTER);
+        label.setBounds(frame.getWidth()/2-75,40,150,40);
         panel.add(label);
 
         JPanel timeSelection = createTimeSelectionPanel();
+        timeSelection.setBounds(frame.getWidth()/2-75,100,150,125);
         panel.add(timeSelection);
 
         JButton buttonTimer = new JButton("Start Timer");
+        buttonTimer.setBounds(frame.getWidth()/2-50,250,100,40);
         panel.add(buttonTimer);
 
         // Variabile pentru a urmări click-urile
