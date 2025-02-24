@@ -90,25 +90,51 @@ public class UI {
         JButton buttonTimer = new JButton("Start Timer");
         panel.add(buttonTimer);
 
+        // Variabile pentru a urmări click-urile
+        final long[] firstClickTime = {0};
+        final int[] clickCount = {0};
+
         buttonTimer.addActionListener(e -> {
+            long currentTime = System.currentTimeMillis();
+            if (firstClickTime[0] == 0 || currentTime - firstClickTime[0] > 10000) {
+                // Resetăm dacă nu se încadrează în 10 secunde
+                firstClickTime[0] = currentTime;
+                clickCount[0] = 1;
+            } else {
+                clickCount[0]++;
+                if (clickCount[0] >= 5) {
+                    // Apare jumpscare-ul
+                    // Afișează un dialog cu o imagine jumpscare (asigură-te că "jumpscare.png" este disponibil)
+                    JOptionPane.showMessageDialog(frame, "BOO!", "Jumpscare", JOptionPane.PLAIN_MESSAGE, new ImageIcon("src/main/resources/jumpscare.png"));
+                    new Time().playSound("src/main/resources/jumpscare_sound.wav");
+                    // Resetăm contorul pentru click-uri
+                    firstClickTime[0] = 0;
+                    clickCount[0] = 0;
+                    return;
+                }
+            }
+
+            // Codul normal pentru setarea timer-ului
             String hour = getSelectedValue(timeSelection, 0);
             String minute = getSelectedValue(timeSelection, 1);
             String second = getSelectedValue(timeSelection, 2);
 
             if (hour != null && minute != null && second != null) {
-                if (!(Integer.parseInt(hour) ==0 && Integer.parseInt(minute) == 0 && Integer.parseInt(second) == 0))
-                {
+                if (!(Integer.parseInt(hour) == 0 && Integer.parseInt(minute) == 0 && Integer.parseInt(second) == 0)) {
                     int delay = Integer.parseInt(hour) * 3600000 + Integer.parseInt(minute) * 60000 + Integer.parseInt(second) * 1000;
                     Time time = new Time();
-                    new Timer().schedule(time.timer(), delay);
+                    new java.util.Timer().schedule(time.timer(), delay);
                     JOptionPane.showMessageDialog(frame, "Timer set for " + hour + ":" + minute + ":" + second);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Set Timer Duration (not 0)");
                 }
-                else JOptionPane.showMessageDialog(frame, "Set Timer Duration(not 0)");
+            } else {
+                JOptionPane.showMessageDialog(frame, "Set Timer Duration");
             }
-            else JOptionPane.showMessageDialog(frame, "Set Timer Duration");
         });
         return panel;
     }
+
 
     private JPanel createPomodoroTab() {
         JPanel panel = new JPanel();
