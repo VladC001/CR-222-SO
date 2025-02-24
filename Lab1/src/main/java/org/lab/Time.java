@@ -23,7 +23,7 @@ public class Time {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                playSound("src/main/resources/alarm_sound.wav");
+                playSound("src/main/resources/timer_sound.wav");
                 JOptionPane.showMessageDialog(null, "Your time is out");
             }
         };
