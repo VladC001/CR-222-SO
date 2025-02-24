@@ -37,6 +37,10 @@ public class UI {
         label.setBounds(frame.getWidth()/2-75,40,150,40);
         panel.add(label);
 
+        JLabel timeIndication = new JLabel("Hour    Min    Sec", SwingConstants.CENTER);
+        timeIndication.setBounds(frame.getWidth()/2-80,75,150,40);
+        panel.add(timeIndication);
+
         JPanel timeSelection = createTimeSelectionPanel();
         timeSelection.setBounds(frame.getWidth()/2-75,100,150,125);
         panel.add(timeSelection);
@@ -86,6 +90,10 @@ public class UI {
         JLabel label = new JLabel("Set Timer Duration", SwingConstants.CENTER);
         label.setBounds(frame.getWidth()/2-75,40,150,40);
         panel.add(label);
+
+        JLabel timeIndication = new JLabel("Hour    Min    Sec", SwingConstants.CENTER);
+        timeIndication.setBounds(frame.getWidth()/2-80,75,150,40);
+        panel.add(timeIndication);
 
         JPanel timeSelection = createTimeSelectionPanel();
         timeSelection.setBounds(frame.getWidth()/2-75,100,150,125);
