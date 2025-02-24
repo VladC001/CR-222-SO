@@ -110,8 +110,8 @@ public class UI {
                 if (clickCount[0] >= 5) {
                     // Apare jumpscare-ul
                     // Afișează un dialog cu o imagine jumpscare (asigură-te că "jumpscare.png" este disponibil)
-                    JOptionPane.showMessageDialog(frame, "BOO!", "Jumpscare", JOptionPane.PLAIN_MESSAGE, new ImageIcon("src/main/resources/jumpscare.png"));
                     new Time().playSound("src/main/resources/jumpscare_sound.wav");
+                    JOptionPane.showMessageDialog(frame, "BOO!", "Jumpscare", JOptionPane.PLAIN_MESSAGE, new ImageIcon("src/main/resources/jumpscare.png"));
                     // Resetăm contorul pentru click-uri
                     firstClickTime[0] = 0;
                     clickCount[0] = 0;
