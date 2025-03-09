@@ -1,51 +1,60 @@
 import javax.swing.*;
-import java.awt.*;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+class Cititor extends Thread {
+    private final Biblioteca biblioteca;
+    private final int id;
+    private final JTextArea textArea;
+
+    public Cititor(Biblioteca biblioteca, int id, JTextArea textArea) {
+        this.biblioteca = biblioteca;
+        this.id = id;
+        this.textArea = textArea;
+    }
+
+    public void run() {
+        for (int i = 0; i < 8; i++) {
+            biblioteca.citesteCarte(i, textArea);
+            try {
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
 
 public class Main {
-
     public static void main(String[] args) {
-        // Creează fereastra principală
-        JFrame frame = new JFrame("Super Workout");
+        JFrame frame = new JFrame("Cititori și Scriitori");
+        JTextArea textArea = new JTextArea();
+        textArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        frame.add(scrollPane);
         frame.setSize(500, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new FlowLayout());
-
-        JTextArea textArea = new JTextArea(20, 15);
-        textArea.setEditable(false);
-        frame.add(new JScrollPane(textArea));
-
-        JButton stopButton = new JButton("Oprește timerul");
-        frame.add(stopButton);
-
-        JButton startAnimationButton = new JButton("Start animation");
-        frame.add(startAnimationButton);
-
-        Timer timer1 = new Timer();
-        Timer timer2 = new Timer();
-        Timer timer3 = new Timer();
-
-
-        Timer1 timerTask1 = new Timer1(timer1, textArea);
-        timer1.scheduleAtFixedRate(timerTask1, 0, 1000);
-
-
-        stopButton.addActionListener(e -> {
-            timerTask1.cancel();
-            timer1.cancel();
-            textArea.append("\nTimerul a fost oprit.");
-        });
-
-
-        startAnimationButton.addActionListener(e -> {
-            new Timer2(timer2);
-        });
-
-        // Pornim Timer3 pentru a aminti să bem apă
-        Timer3 timerTask3 = new Timer3(timer3, frame);
-        timer3.scheduleAtFixedRate(timerTask3, 0, 5000);
-
         frame.setVisible(true);
+
+        Biblioteca biblioteca = new Biblioteca(8);
+        Scriitor[] scriitori = new Scriitor[6];
+        Cititor[] cititori = new Cititor[10];
+
+        for (int i = 0; i < 6; i++) {
+            scriitori[i] = new Scriitor(biblioteca, i + 1, textArea);
+            scriitori[i].start();
+        }
+
+        for (Scriitor scriitor : scriitori) {
+            try {
+                scriitor.join(); // Așteptăm să termine scriitorii
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (int i = 0; i < 10; i++) {
+            cititori[i] = new Cititor(biblioteca, i + 1, textArea);
+            cititori[i].start();
+        }
     }
 }
