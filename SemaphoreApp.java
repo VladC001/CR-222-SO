@@ -1,40 +1,34 @@
-package lab1;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
+import javax.swing.*;
+import java.awt.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
-class SemaphoreApp {
+public class SemaphoreApp {
     private static Timer timer = new Timer();
+    private static Timer timer3 = new Timer();  // Al treilea timer pentru task periodic
     private static JButton semaphoreButton; // Butonul care va reprezenta semaforul
 
     public static void main(String[] args) {
-        // Creăm fereastra
+        // Creăm fereastra semaforului
         JFrame frame = new JFrame("Semafor");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(200, 200);
 
-        // Creăm un buton pentru semafor
         semaphoreButton = new JButton("Semafor");
         semaphoreButton.setFont(new Font("Arial", Font.PLAIN, 20));
         semaphoreButton.setPreferredSize(new Dimension(100, 100));
 
-        // Setăm un layout pentru fereastră
         frame.setLayout(new BorderLayout());
         frame.add(semaphoreButton, BorderLayout.CENTER);
-
-        // Vizualizăm fereastra
         frame.setVisible(true);
 
         // Pornim semaforul
         startSemaphore();
+
+        // Adăugăm celelalte task-uri
+        AdditionalTimers.scheduleAtSpecificTime();
+        AdditionalTimers.scheduleWithFixedDelay();
+        AdditionalTimers.schedulePeriodicTask();
     }
 
     public static void startSemaphore() {
@@ -43,9 +37,27 @@ class SemaphoreApp {
         TimerTask yellow = new SemaphoreTask("Galben", Color.YELLOW);
         TimerTask green = new SemaphoreTask("Verde", Color.GREEN);
 
-        timer.scheduleAtFixedRate(red, 0, 12000); // Roșu la început și se repetă la fiecare 12 secunde
+        // Timere pentru semafor
+        timer.scheduleAtFixedRate(red, 0, 12000);  // Roșu la început și se repetă la fiecare 12 secunde
         timer.scheduleAtFixedRate(yellow, 5000, 12000); // Galben după 5 secunde
-        timer.scheduleAtFixedRate(green, 7000, 12000); // Verde după 7 secunde
+        timer.scheduleAtFixedRate(green, 7000, 12000);  // Verde după 7 secunde
+
+        // Al treilea timer pentru un task periodic
+        timer3.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("Task periodic semafor executat la fiecare 10 secunde.");
+            }
+        }, 0, 10000);  // La fiecare 10 secunde
+    }
+
+    // Metodă pentru a opri toate timerele
+    public static void stopAllTimers() {
+        System.out.println("Oprire timere...");
+        timer.cancel();
+        timer.purge();
+        timer3.cancel();
+        timer3.purge();
     }
 
     static class SemaphoreTask extends TimerTask {
