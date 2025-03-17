@@ -22,7 +22,31 @@ public class Library {
         notifyAll();
     }
 
+    public static void main(String[] args) {
+        int numWriters = 21;  // 21 de scriitori
+        int booksPerWriter = 10;  // Fiecare scrie 10 cărți
+        int maxBooks = numWriters * booksPerWriter;  // Capacitatea maximă a bibliotecii
 
+        Library library = new Library(maxBooks);
+        Thread[] writers = new Thread[numWriters];
+
+        for (int i = 0; i < numWriters; i++) {
+            writers[i] = new Writer(library, i + 1, booksPerWriter);
+            writers[i].start();
+        }
+
+        // Așteptăm finalizarea tuturor scriitorilor
+        for (Thread writer : writers) {
+            try {
+                writer.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        System.out.println("Toți scriitorii au terminat.");
+    }
+}
 
 class Writer extends Thread {
     private final Library library;
