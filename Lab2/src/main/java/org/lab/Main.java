@@ -1,11 +1,12 @@
 package org.lab;
 
 import javax.swing.*;
+import javax.swing.text.StyledDocument;
 import java.awt.*;
 
 public class Main {
     public static void main(String[] args) {
-        int x , y , z;
+        int x, y, z;
         x = 25;
         y = 34;
         z = 20;
@@ -14,13 +15,14 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Text area for view processes
-        JTextArea textArea = new JTextArea();
-        textArea.setText("Start\n");
-        textArea.setFont(new Font("Arial", Font.PLAIN, 12));
-        textArea.setEditable(false);
+        JTextPane textPane = new JTextPane();
+        StyledDocument doc = textPane.getStyledDocument();
+
+        textPane.setText("Start\n");
+        textPane.setFont(new Font("Arial", Font.PLAIN, 12));
 
         //scroll pane for view all history
-        JScrollPane scrollPane = new JScrollPane(textArea);
+        JScrollPane scrollPane = new JScrollPane(textPane);
 
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         frame.add(scrollPane);
@@ -33,7 +35,7 @@ public class Main {
 
         //initialize y readers
         for (int i = 0; i < y; i++) {
-            new Readers(textArea, bibliotecary, z).start();
+            new Readers(doc, bibliotecary, z).start();
         }
     }
 }
