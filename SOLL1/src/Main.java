@@ -89,24 +89,28 @@ public class MainTimer extends JFrame {
         }
 
         generalTimer = new Timer();
-        generalTimer.scheduleAtFixedRate(new TimerTask() {
-            int timeLeft = totalSeconds;
+        countdown(totalSeconds);
+    }
 
+    private void countdown(int timeLeft) {
+        if (timeLeft < 0) {
+            timerLabel.setText("Time's up!");
+            OtherTimers.repeatBeep(5, 1000);
+            return;
+        }
+
+        int min = timeLeft / 60;
+        int sec = timeLeft % 60;
+        timerLabel.setText(String.format("%02d:%02d", min, sec));
+
+        generalTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (timeLeft > 0) {
-                    int min = timeLeft / 60;
-                    int sec = timeLeft % 60;
-                    timerLabel.setText(String.format("%02d:%02d", min, sec));
-                    timeLeft--;
-                } else {
-                    generalTimer.cancel();
-                    OtherTimers.repeatBeep(5, 1000);
-                    timerLabel.setText("Time's up!");
-                }
+                countdown(timeLeft - 1);
             }
-        }, 0, 1000);
+        }, 1000);
     }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
