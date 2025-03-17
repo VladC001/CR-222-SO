@@ -9,9 +9,9 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         int x, y, z;
-        x = 25;
-        y = 34;
-        z = 20;
+        x = 25; //nr scriitori
+        y = 34; //nr cititori
+        z = 20; //nr carti
 
         JFrame frame = new JFrame("Readers and Writers");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -44,8 +44,7 @@ public class Main {
 
 
         List<Thread> writers = new ArrayList<>();
-        int writerCount = 5;
-        for (int i = 0; i < writerCount; i++) {
+        for (int i = 0; i < x; i++) {
             Thread writer = new Writers(doc, bibliotecary, z);
             writers.add(writer);
             writer.start();

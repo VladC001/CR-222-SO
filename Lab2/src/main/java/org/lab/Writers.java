@@ -1,7 +1,10 @@
 package org.lab;
 
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import java.awt.*;
 
 public class Writers extends Thread {
     private static int count = 0;
@@ -30,6 +33,10 @@ public class Writers extends Thread {
     @Override
     public void run() {
 
+        Style styleGreen = doc.addStyle("GreenStyle", null);
+        StyleConstants.setForeground(styleGreen, Color.GREEN);
+        StyleConstants.setBold(styleGreen, true);
+
         try {
             doc.insertString(doc.getLength(), "Writer(" + id + ") a intrat în bibliotecă.\n", null);
         } catch (BadLocationException e) {
@@ -49,7 +56,7 @@ public class Writers extends Thread {
 
 
             try {
-                doc.insertString(doc.getLength(), "Writer(" + id + ") a început să scrie cartea " + currentBook + ".\n", null);
+                doc.insertString(doc.getLength(), "Writer(" + id + ") a început să scrie cartea " + currentBook + ".\n", styleGreen);
             } catch (BadLocationException e) {
                 e.printStackTrace();
             }
