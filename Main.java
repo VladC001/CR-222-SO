@@ -9,25 +9,14 @@ class Reader extends Thread {
         this.booksToRead = booksToRead;
     }
 
-    @Override
-    public void run() {
-        for (int i = 1; i <= booksToRead; i++) {
-            String book = Library.readBook();
-            System.out.println("Book read: " + book + " by Reader " + readerId);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-    }
+
 }
 
 public class Main {
     public static void main(String[] args) {
         int numWriters = 21;
-        int booksPerWriter = 10;
-        int numReaders = 21;
+        int booksPerWriter = 9;
+        int numReaders = 12;
         int booksPerReader = booksPerWriter;
 
         int maxBooks = numWriters * booksPerWriter;

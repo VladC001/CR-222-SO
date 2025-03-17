@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Library {
     private final List<String> books = new ArrayList<>();
     private final int maxBooks;
@@ -12,41 +15,28 @@ public class Library {
     public synchronized void writeBook(String book) {
         while (books.size() >= maxBooks) {
             try {
-                wait();
+                wait();  // Așteaptă dacă biblioteca este plină
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
         books.add(book);
         System.out.println("Book written: " + book);
-        notifyAll();
+        notifyAll();  // Anunță cititorii sau alți scriitori
     }
 
-    public static void main(String[] args) {
-        int numWriters = 21;  // 21 de scriitori
-        int booksPerWriter = 10;  // Fiecare scrie 10 cărți
-        int maxBooks = numWriters * booksPerWriter;  // Capacitatea maximă a bibliotecii
-
-        Library library = new Library(maxBooks);
-        Thread[] writers = new Thread[numWriters];
-
-        for (int i = 0; i < numWriters; i++) {
-            writers[i] = new Writer(library, i + 1, booksPerWriter);
-            writers[i].start();
+    // Metoda readBook pe care o ceri
+    public synchronized String readBook() {
+        if (!books.isEmpty()) {
+            String book = books.remove(0);  // Citește prima carte din listă
+            System.out.println("Book read: " + book);
+            return book;
         }
-
-        // Așteptăm finalizarea tuturor scriitorilor
-        for (Thread writer : writers) {
-            try {
-                writer.join();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-
-        System.out.println("Toți scriitorii au terminat.");
+        return "No books available";  // Dacă nu sunt cărți disponibile
     }
 }
+
+
 
 class Writer extends Thread {
     private final Library library;
