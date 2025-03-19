@@ -35,6 +35,14 @@ public class Writers extends Thread {
         StyleConstants.setForeground(styleGreen, Color.GREEN);
         StyleConstants.setBold(styleGreen, true);
 
+        Style styleRed = doc.addStyle("RedStyle", null);
+        StyleConstants.setForeground(styleRed, Color.RED);
+        StyleConstants.setBold(styleRed, true);
+
+        Style styleOrange = doc.addStyle("YellowStyle", null);
+        StyleConstants.setForeground(styleOrange, Color.ORANGE);
+        StyleConstants.setBold(styleOrange, true);
+
         try {
             // Încercăm să intrăm în bibliotecă folosind metoda care utilizează ReentrantLock.
             bibliotecary.enterLibrary();
@@ -74,7 +82,7 @@ public class Writers extends Thread {
             synchronized (Writers.class) {
                 if (!finishMessagePrinted) {
                     try {
-                        doc.insertString(doc.getLength(), "Sesiunea scriitorilor s-a încheiat.\n", null);
+                        doc.insertString(doc.getLength(), "Sesiunea scriitorilor s-a încheiat.\n",styleOrange );
                     } catch (BadLocationException e) {
                         e.printStackTrace();
                     }
@@ -89,7 +97,7 @@ public class Writers extends Thread {
             }
         } catch (InterruptedException e) {
             try {
-                doc.insertString(doc.getLength(), "Writer(" + id + ") a fost întrerupt deoarece biblioteca era ocupată.\n", null);
+                doc.insertString(doc.getLength(), "Writer(" + id + ") a fost întrerupt deoarece biblioteca era ocupată.\n", styleRed);
             } catch (BadLocationException ex) {
                 ex.printStackTrace();
             }
