@@ -1,3 +1,6 @@
+import javax.swing.*;
+import java.awt.*;
+
 class Reader extends Thread {
     private final Library library;
     private final int readerId;
@@ -26,43 +29,43 @@ class Reader extends Thread {
 
 public class Main {
     public static void main(String[] args) {
-        int numWriters = 21;
-        int booksPerWriter = 9;
-        int numReaders = 12;
-        int booksPerReader = booksPerWriter;
+        JFrame frame = new JFrame("Library Simulation");
+        frame.setSize(500, 400);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        int maxBooks = numWriters * booksPerWriter;
+        JTextArea textArea = new JTextArea();
+        textArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(textArea);
 
-        Library library = new Library(maxBooks);
-        Thread[] writers = new Thread[numWriters];
-        Thread[] readers = new Thread[numReaders];
+        JButton startButton = new JButton("Start Simulation");
 
-        for (int i = 0; i < numWriters; i++) {
-            writers[i] = new Writer(library, i + 1, booksPerWriter);
-            writers[i].start();
-        }
+        frame.setLayout(new BorderLayout());
+        frame.add(scrollPane, BorderLayout.CENTER);
+        frame.add(startButton, BorderLayout.SOUTH);
 
-        for (int i = 0; i < numReaders; i++) {
-            readers[i] = new Reader(library, i + 1, booksPerReader);
-            readers[i].start();
-        }
+        startButton.addActionListener(e -> {
+            int numWriters = 5;
+            int booksPerWriter = 5;
+            int numReaders = 3;
+            int booksPerReader = booksPerWriter;
 
-        for (Thread writer : writers) {
-            try {
-                writer.join();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+            int maxBooks = numWriters * booksPerWriter;
+            Library library = new Library(maxBooks, textArea);
+
+            Thread[] writers = new Thread[numWriters];
+            Thread[] readers = new Thread[numReaders];
+
+            for (int i = 0; i < numWriters; i++) {
+                writers[i] = new Writer(library, i + 1, booksPerWriter);
+                writers[i].start();
             }
-        }
 
-        for (Thread reader : readers) {
-            try {
-                reader.join();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+            for (int i = 0; i < numReaders; i++) {
+                readers[i] = new Reader(library, i + 1, booksPerReader);
+                readers[i].start();
             }
-        }
+        });
 
-        System.out.println("Toți scriitorii și cititorii au terminat.");
+        frame.setVisible(true);
     }
 }

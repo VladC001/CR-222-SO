@@ -1,15 +1,17 @@
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.swing.JTextArea;
+
 
 public class Library {
     private final List<String> books = new ArrayList<>();
     private final int maxBooks;
+    private final JTextArea textArea;
 
-    public Library(int maxBooks) {
+    public Library(int maxBooks, JTextArea textArea) {
         this.maxBooks = maxBooks;
+        this.textArea = textArea;
     }
 
     public synchronized void writeBook(String book) {
