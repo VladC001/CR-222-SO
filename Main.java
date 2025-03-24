@@ -9,6 +9,8 @@ public class Main {
     private static final int caloriiPeMasa = 100; // Fiecare filosof consumă 100 calorii la fiecare masă
     private static final ReentrantLock[] furculite = new ReentrantLock[numarFilosofi];
     private static final JTextArea statusArea = new JTextArea();
+    private static int filosofiiTerminati = 0;  // Variabilă globală pentru numărul filosofilor terminați
+    private static JFrame frame;
 
     public static void main(String[] args) {
         // Creăm un tablou de furculițe protejate prin ReentrantLock
@@ -33,7 +35,7 @@ public class Main {
 
     private static void setupGUI() {
         // Creăm fereastra principală
-        JFrame frame = new JFrame("Problema Filosofilor");
+        frame = new JFrame("Problema Filosofilor");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 400);
         frame.setLayout(new BorderLayout());
@@ -46,5 +48,16 @@ public class Main {
 
         // Afișăm fereastra
         frame.setVisible(true);
+    }
+
+    // Incrementăm contorul filosofilor terminați
+    public static synchronized void incrementFilosofiTerminati() {
+        filosofiiTerminati++;
+        if (filosofiiTerminati == numarFilosofi) {
+            SwingUtilities.invokeLater(() -> {
+                frame.dispose(); // Închide fereastra când toți filosofii au terminat
+                System.exit(0); // Oprirea aplicației
+            });
+        }
     }
 }
