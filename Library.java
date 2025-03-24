@@ -1,8 +1,7 @@
+// Library.java
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JTextArea;
-
 
 public class Library {
     private final List<String> books = new ArrayList<>();
@@ -17,28 +16,35 @@ public class Library {
     public synchronized void writeBook(String book) {
         while (books.size() >= maxBooks) {
             try {
-                wait();  // Așteaptă dacă biblioteca este plină
+                wait();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
         books.add(book);
-        System.out.println("Book written: " + book);
-        notifyAll();  // Anunță cititorii sau alți scriitori
+        updateTextArea("Book written: " + book + "\n");
+        notifyAll();
     }
 
-    // Metoda readBook pe care o ceri
     public synchronized String readBook() {
-        if (!books.isEmpty()) {
-            String book = books.remove(0);  // Citește prima carte din listă
-            System.out.println("Book read: " + book);
-            return book;
+        while (books.isEmpty()) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return "No books available";
+            }
         }
-        return "No books available";  // Dacă nu sunt cărți disponibile
+        String book = books.remove(0);
+        updateTextArea("Book read: " + book + "\n");
+        notifyAll();
+        return book;
+    }
+
+    public void updateTextArea(String message) {
+        textArea.append(message);
     }
 }
-
-
 
 class Writer extends Thread {
     private final Library library;

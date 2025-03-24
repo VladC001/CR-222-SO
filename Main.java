@@ -1,5 +1,8 @@
+// Main.java
 import javax.swing.*;
 import java.awt.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 class Reader extends Thread {
     private final Library library;
@@ -16,16 +19,15 @@ class Reader extends Thread {
     public void run() {
         for (int i = 0; i < booksToRead; i++) {
             String book = library.readBook();
-            System.out.println("Reader " + readerId + " read: " + book);
+            library.updateTextArea("Reader " + readerId + " read: " + book + "\n");
             try {
-                Thread.sleep(150);  // Simulează timpul necesar pentru a citi o carte
+                Thread.sleep(150);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
     }
 }
-
 
 public class Main {
     public static void main(String[] args) {
@@ -44,9 +46,9 @@ public class Main {
         frame.add(startButton, BorderLayout.SOUTH);
 
         startButton.addActionListener(e -> {
-            int numWriters = 5;
-            int booksPerWriter = 5;
-            int numReaders = 3;
+            int numWriters = 23;
+            int booksPerWriter = 8;
+            int numReaders = 12;
             int booksPerReader = booksPerWriter;
 
             int maxBooks = numWriters * booksPerWriter;
@@ -64,6 +66,14 @@ public class Main {
                 readers[i] = new Reader(library, i + 1, booksPerReader);
                 readers[i].start();
             }
+
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    System.exit(0);
+                }
+            }, 60000);
         });
 
         frame.setVisible(true);
