@@ -8,7 +8,7 @@ public class Reader implements Runnable {
     @Override
     public void run() {
         while (true) {
-            sharedZone.readBooks();
+            sharedZone.readBooks();  // Citește câte 3 cărți
         }
     }
 }

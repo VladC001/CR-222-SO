@@ -14,7 +14,7 @@ public class SharedZone {
             }
         }
         books.add(book);
-        System.out.println("A scris o carte: " + book);
+        BookApp.logMessage("A scris o carte: " + book, "green");  // Mesaj colorat verde
         notifyAll();  // Anunță cititorii că o carte a fost adăugată
     }
 
@@ -30,7 +30,7 @@ public class SharedZone {
         for (int i = 0; i < 3; i++) {
             readBooks.append(books.poll()).append("\n");
         }
-        System.out.println("A citit cărțile: \n" + readBooks);
+        BookApp.logMessage("A citit cărțile:\n" + readBooks, "blue");  // Mesaj colorat albastru
         notifyAll();  // Anunță scriitorii că au citit cărțile
         return readBooks.toString();
     }
