@@ -9,8 +9,20 @@ class Reader extends Thread {
         this.booksToRead = booksToRead;
     }
 
-
+    @Override
+    public void run() {
+        for (int i = 0; i < booksToRead; i++) {
+            String book = library.readBook();
+            System.out.println("Reader " + readerId + " read: " + book);
+            try {
+                Thread.sleep(150);  // Simulează timpul necesar pentru a citi o carte
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
 }
+
 
 public class Main {
     public static void main(String[] args) {
