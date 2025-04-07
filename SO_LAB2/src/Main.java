@@ -3,54 +3,72 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
+import java.util.List;
 class Library {
     static int books;
     Writer[] writers;
     Reader[] readers;
     static ArrayList<String> library = new ArrayList<>();
-    static final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock(true);
+    static final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock(true); // Fairness ON
     static final Lock writeLock = rwl.writeLock();
     static final Lock readLock = rwl.readLock();
     TextArea outputArea;
 
-    public Library(int writers, int readers, int books, TextArea outputArea) {
-        this.writers = new Writer[writers];
-        this.readers = new Reader[readers];
+    public Library(int writersCount, int readersCount, int books, TextArea outputArea) {
+        this.writers = new Writer[writersCount];
+        this.readers = new Reader[readersCount];
         Library.books = books;
         this.outputArea = outputArea;
-        for (int i = 0; i < writers; i++) {
-            this.writers[i] = new Writer("Writer " + (i+1), outputArea);
+
+        // Listă totală de cărți
+        List<String> allBooks = new ArrayList<>(Arrays.asList(
+                "Book1", "Book2", "Book3", "Book4", "Book5",
+                "Book6", "Book7", "Book8", "Book9", "Book10",
+                "Book11", "Book12", "Book13", "Book14", "Book15"
+        ));
+
+        // Împărțim cărțile între scriitori
+        Collections.shuffle(allBooks); // Shuffle ca să nu le scrie unul după altul
+        int booksPerWriter = (int)Math.ceil((double)allBooks.size() / writersCount);
+        for (int i = 0; i < writersCount; i++) {
+            int fromIndex = i * booksPerWriter;
+            int toIndex = Math.min(fromIndex + booksPerWriter, allBooks.size());
+            if (fromIndex >= allBooks.size()) break;
+            List<String> writerBooks = allBooks.subList(fromIndex, toIndex);
+            this.writers[i] = new Writer("Writer " + (i + 1), outputArea, new ArrayList<>(writerBooks));
         }
-        for (int i = 0; i < readers; i++) {
-            this.readers[i] = new Reader("Reader " + (i+1), outputArea);
+
+
+        for (int i = 0; i < readersCount; i++) {
+            this.readers[i] = new Reader("Reader " + (i + 1), outputArea);
         }
     }
 
     public void start() {
         for (Writer writer : this.writers) {
-            writer.start();
+            if (writer != null) {
+                writer.start();
+            }
         }
         for (Reader reader : this.readers) {
             reader.start();
         }
     }
+
 }
 
 class Writer extends Thread {
     String name;
-    ArrayList<String> bookList = new ArrayList<>(Arrays.asList(
-            "Book1", "Book2", "Book3", "Book4", "Book5",
-            "Book6", "Book7", "Book8", "Book9", "Book10",
-            "Book11", "Book12", "Book13", "Book14", "Book15"));
+    ArrayList<String> bookList;
     public final Lock writeLock = Library.writeLock;
     ArrayList<String> library = Library.library;
     ArrayList<String> writtenBooks = new ArrayList<>();
     TextArea outputArea;
 
-    public Writer(String name, TextArea outputArea) {
+    public Writer(String name, TextArea outputArea, ArrayList<String> bookList) {
         this.name = name;
         this.outputArea = outputArea;
+        this.bookList = bookList;
     }
 
     @Override
@@ -59,7 +77,7 @@ class Writer extends Thread {
             try {
                 writeLock.lock();
                 if (!library.contains(book)) {
-                    Thread.sleep(200); // Writing simulation
+                    Thread.sleep(100 + new Random().nextInt(300)); // Simulare scriere mai realistă
                     library.add(book);
                     writtenBooks.add(book);
                     outputArea.append(name + " wrote " + book + "\n");
@@ -93,7 +111,7 @@ class Reader extends Thread {
                 readLock.lock();
                 for (String book : library) {
                     if (!readBooks.contains(book)) {
-                        Thread.sleep(100); // Reading simulation
+                        Thread.sleep(100); // Simulare citire
                         readBooks.add(book);
                         outputArea.append(name + " read " + book + "\n");
                     }
@@ -115,27 +133,25 @@ public class Main {
         frame.setSize(500, 400);
         frame.setLayout(new BorderLayout());
 
-        // TextArea for displaying output
+        // Zonă pentru afișarea rezultatelor
         TextArea outputArea = new TextArea();
         outputArea.setEditable(false);
         frame.add(outputArea, BorderLayout.CENTER);
 
-        // Button to start the simulation
+        // Butonul de pornire
         Button startButton = new Button("Start Simulation");
         frame.add(startButton, BorderLayout.SOUTH);
 
-        // Action listener to start the simulation when clicked
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                final int writers = 18;
-                final int readers = 24;
-                final int books = 15;
+                final int writers = 18;   // poți modifica
+                final int readers = 24;   // poți modifica
+                final int books = 15;    // total cărți
                 Library library = new Library(writers, readers, books, outputArea);
                 library.start();
             }
         });
 
-        // Set up the frame
         frame.setVisible(true);
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
