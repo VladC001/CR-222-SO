@@ -26,12 +26,14 @@ public class Philosopher implements Runnable {
     }
 
     private void think() throws InterruptedException {
-        System.out.println("Philosopher " + id + " is thinking.");
+        String message = "Philosopher " + id + " is thinking.";
+        Main.updateTextArea(message); // Actualizăm GUI-ul
         Thread.sleep((int)(Math.random() * 100));
     }
 
     private void eat() throws InterruptedException {
-        System.out.println("Philosopher " + id + " is eating.");
+        String message = "Philosopher " + id + " is eating.";
+        Main.updateTextArea(message); // Actualizăm GUI-ul
         Thread.sleep((int)(Math.random() * 100));
     }
 
